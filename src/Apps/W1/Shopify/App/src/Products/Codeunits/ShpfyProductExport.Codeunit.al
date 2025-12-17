@@ -365,15 +365,11 @@ codeunit 30178 "Shpfy Product Export"
             ShopifyVariant."Tax Code" := Item."Tax Group Code";
             ShopifyVariant.Taxable := true;
             ShopifyVariant.Weight := ItemUnitofMeasure."Qty. per Unit of Measure" > 0 ? Item."Gross Weight" * ItemUnitofMeasure."Qty. per Unit of Measure" : Item."Gross Weight";
-            ProductEvents.OnBeforeSetVariantOptionValues(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop, false, IsHandled);
-            if not IsHandled then begin
-                ShopifyVariant."Option 1 Name" := Shop."Option Name for UoM";
-                ShopifyVariant."Option 1 Value" := ItemUnitofMeasure.Code;
-            end;
+            ShopifyVariant."Option 1 Name" := Shop."Option Name for UoM";
+            ShopifyVariant."Option 1 Value" := ItemUnitofMeasure.Code;
             ShopifyVariant."Shop Code" := Shop.Code;
             ShopifyVariant."Item SystemId" := Item.SystemId;
             ShopifyVariant."UoM Option Id" := 1;
-            ProductEvents.OnAfterFillInProductVariantData(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop);
         end;
     end;
 
@@ -428,20 +424,17 @@ codeunit 30178 "Shpfy Product Export"
             ShopifyVariant."Tax Code" := Item."Tax Group Code";
             ShopifyVariant.Taxable := true;
             ShopifyVariant.Weight := Item."Gross Weight";
-            ProductEvents.OnBeforeSetVariantOptionValues(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop, ItemAsVariant, IsHandled);
-            if not IsHandled then begin
-                if ShopifyVariant."Option 1 Name" = '' then
-                    ShopifyVariant."Option 1 Name" := 'Variant';
-                if ItemAsVariant then
-                    ShopifyVariant."Option 1 Value" := Item."No."
-                else
-                    ShopifyVariant."Option 1 Value" := ItemVariant.Code;
-            end;
+            if ShopifyVariant."Option 1 Name" = '' then
+                ShopifyVariant."Option 1 Name" := 'Variant';
+            if ItemAsVariant then
+                ShopifyVariant."Option 1 Value" := Item."No."
+            else
+                ShopifyVariant."Option 1 Value" := ItemVariant.Code;
             ShopifyVariant."Shop Code" := Shop.Code;
             ShopifyVariant."Item SystemId" := Item.SystemId;
             ShopifyVariant."Item Variant SystemId" := ItemVariant.SystemId;
             ShopifyVariant."UoM Option Id" := 2;
-            ProductEvents.OnAfterFillInProductVariantData(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop);
+            ProductEvents.OnAfterFillInProductVariantDataFromVariant(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop);
         end;
     end;
 
@@ -488,18 +481,15 @@ codeunit 30178 "Shpfy Product Export"
             ShopifyVariant."Tax Code" := Item."Tax Group Code";
             ShopifyVariant.Taxable := true;
             ShopifyVariant.Weight := ItemUnitofMeasure."Qty. per Unit of Measure" > 0 ? Item."Gross Weight" * ItemUnitofMeasure."Qty. per Unit of Measure" : Item."Gross Weight";
-            ProductEvents.OnBeforeSetVariantOptionValues(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop, false, IsHandled);
-            if not IsHandled then begin
-                ShopifyVariant."Option 1 Name" := 'Variant';
-                ShopifyVariant."Option 1 Value" := ItemVariant.Code;
-                ShopifyVariant."Option 2 Name" := Shop."Option Name for UoM";
-                ShopifyVariant."Option 2 Value" := ItemUnitofMeasure.Code;
-            end;
+            ShopifyVariant."Option 1 Name" := 'Variant';
+            ShopifyVariant."Option 1 Value" := ItemVariant.Code;
+            ShopifyVariant."Option 2 Name" := Shop."Option Name for UoM";
+            ShopifyVariant."Option 2 Value" := ItemUnitofMeasure.Code;
             ShopifyVariant."Shop Code" := Shop.Code;
             ShopifyVariant."Item SystemId" := Item.SystemId;
             ShopifyVariant."Item Variant SystemId" := ItemVariant.SystemId;
             ShopifyVariant."UoM Option Id" := 2;
-            ProductEvents.OnAfterFillInProductVariantData(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop);
+            ProductEvents.OnAfterFillInProductVariantDataFromVariant(ShopifyVariant, Item, ItemVariant, ItemUnitofMeasure, Shop);
         end;
     end;
 
