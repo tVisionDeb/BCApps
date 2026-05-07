@@ -434,18 +434,35 @@ codeunit 30178 "Shpfy Product Export"
                 ShopifyVariant."Country/Region of Origin Code" := GetCountryISOCode(Item."Country/Region of Origin Code");
             end;
             if ShopifyVariant."Option 1 Name" = '' then
-                ShopifyVariant."Option 1 Name" := 'Variant';
-            if ShopifyVariant."Option 1 Name" = 'Variant' then
-                if ItemAsVariant then
-                    ShopifyVariant."Option 1 Value" := Item."No."
-                else
-                    ShopifyVariant."Option 1 Value" := ItemVariant.Code;
+                ShopifyVariant."Option 1 Name" := ResolveOption1Name(ShopifyVariant."Product Id");
+            if ItemAsVariant then
+                ShopifyVariant."Option 1 Value" := Item."No."
+            else
+                ShopifyVariant."Option 1 Value" := ItemVariant.Code;
             ShopifyVariant."Shop Code" := Shop.Code;
             ShopifyVariant."Item SystemId" := Item.SystemId;
             ShopifyVariant."Item Variant SystemId" := ItemVariant.SystemId;
             ShopifyVariant."UoM Option Id" := 2;
             ProductEvents.OnAfterFillInProductVariantData(ShopifyVariant, Item, ItemVariant, Shop);
         end;
+    end;
+
+    local procedure ResolveOption1Name(ProductId: BigInteger): Text[50]
+    var
+        ExistingVariant: Record "Shpfy Variant";
+        ResolvedName: Text[50];
+    begin
+        ExistingVariant.SetRange("Product Id", ProductId);
+        if ExistingVariant.IsEmpty() then
+            exit('Variant');
+        ExistingVariant.FindFirst();
+        ResolvedName := ExistingVariant."Option 1 Name";
+        if ResolvedName = '' then
+            exit('Variant');
+        ExistingVariant.SetFilter("Option 1 Name", '<>%1', ResolvedName);
+        if not ExistingVariant.IsEmpty() then
+            exit('Variant');
+        exit(ResolvedName);
     end;
 
     /// <summary> 
